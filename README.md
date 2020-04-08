@@ -10,27 +10,27 @@ cachedir: .pytest_cache
 rootdir: /workspace, inifile: pytest.ini
 collected 9 items    
                                                                                                                                                                                         
-test.py::CustomTestCase::test_example_0_RN50_Gradient_Tape_HVD PASSED                                     [ 11%]
-test.py::CustomTestCase::test_example_1_RN50_Gradient_Tape_HVD_AMP PASSED                                 [ 22%]
-test.py::CustomTestCase::test_example_2_RN50_Gradient_Tape_HVD_AMP_FP16_All_Reduce PASSED                 [ 33%]
-test.py::CustomTestCase::test_example_3_keras_Sequential_CTL_Gradient_Tape_HVD PASSED                     [ 44%]
-test.py::CustomTestCase::test_example_4_keras_Sequential_CTL_Gradient_Tape_HVD_AMP PASSED                 [ 55%]
-test.py::CustomTestCase::test_example_5_keras_Sequential_CTL_Gradient_Tape_HVD_AMP_FP16_All_Reduce PASSED [ 66%]
-test.py::CustomTestCase::test_example_6_keras_fit_compile_Gradient_Tape_HVD PASSED                        [ 77%]
-test.py::CustomTestCase::test_example_7_keras_fit_compile_Gradient_Tape_HVD_AMP PASSED                    [ 88%]
-test.py::CustomTestCase::test_example_8_keras_fit_compile_Gradient_Tape_HVD_AMP_FP16_All_Reduce PASSED    [100%]
+test.py::HorovodTest::test_example_0_RN50_Gradient_Tape_HVD PASSED                                     [ 11%]
+test.py::HorovodTest::test_example_1_RN50_Gradient_Tape_HVD_AMP PASSED                                 [ 22%]
+test.py::HorovodTest::test_example_2_RN50_Gradient_Tape_HVD_AMP_FP16_All_Reduce PASSED                 [ 33%]
+test.py::HorovodTest::test_example_3_keras_Sequential_CTL_Gradient_Tape_HVD PASSED                     [ 44%]
+test.py::HorovodTest::test_example_4_keras_Sequential_CTL_Gradient_Tape_HVD_AMP PASSED                 [ 55%]
+test.py::HorovodTest::test_example_5_keras_Sequential_CTL_Gradient_Tape_HVD_AMP_FP16_All_Reduce PASSED [ 66%]
+test.py::HorovodTest::test_example_6_keras_fit_compile_Gradient_Tape_HVD PASSED                        [ 77%]
+test.py::HorovodTest::test_example_7_keras_fit_compile_Gradient_Tape_HVD_AMP PASSED                    [ 88%]
+test.py::HorovodTest::test_example_8_keras_fit_compile_Gradient_Tape_HVD_AMP_FP16_All_Reduce PASSED    [100%]
 
-============================================== slowest test durations ==========================================
+============================================== slowest test durations =======================================
 
-17.79s call     test.py::CustomTestCase::test_example_2_RN50_Gradient_Tape_HVD_AMP_FP16_All_Reduce
-17.55s call     test.py::CustomTestCase::test_example_1_RN50_Gradient_Tape_HVD_AMP
-16.00s call     test.py::CustomTestCase::test_example_0_RN50_Gradient_Tape_HVD
-10.49s call     test.py::CustomTestCase::test_example_5_keras_Sequential_CTL_Gradient_Tape_HVD_AMP_FP16_All_Reduce
-10.42s call     test.py::CustomTestCase::test_example_4_keras_Sequential_CTL_Gradient_Tape_HVD_AMP
-8.62s call     test.py::CustomTestCase::test_example_3_keras_Sequential_CTL_Gradient_Tape_HVD
-6.40s call     test.py::CustomTestCase::test_example_8_keras_fit_compile_Gradient_Tape_HVD_AMP_FP16_All_Reduce
-6.39s call     test.py::CustomTestCase::test_example_7_keras_fit_compile_Gradient_Tape_HVD_AMP
-6.33s call     test.py::CustomTestCase::test_example_6_keras_fit_compile_Gradient_Tape_HVD
+17.79s call     test.py::HorovodTest::test_example_2_RN50_Gradient_Tape_HVD_AMP_FP16_All_Reduce
+17.55s call     test.py::HorovodTest::test_example_1_RN50_Gradient_Tape_HVD_AMP
+16.00s call     test.py::HorovodTest::test_example_0_RN50_Gradient_Tape_HVD
+10.49s call     test.py::HorovodTest::test_example_5_keras_Sequential_CTL_Gradient_Tape_HVD_AMP_FP16_All_Reduce
+10.42s call     test.py::HorovodTest::test_example_4_keras_Sequential_CTL_Gradient_Tape_HVD_AMP
+08.62s call     test.py::HorovodTest::test_example_3_keras_Sequential_CTL_Gradient_Tape_HVD
+06.40s call     test.py::HorovodTest::test_example_8_keras_fit_compile_Gradient_Tape_HVD_AMP_FP16_All_Reduce
+06.39s call     test.py::HorovodTest::test_example_7_keras_fit_compile_Gradient_Tape_HVD_AMP
+06.33s call     test.py::HorovodTest::test_example_6_keras_fit_compile_Gradient_Tape_HVD
 (0.00 durations hidden.  Use -vv to show these durations.)
 
 =========================================== 9 passed in 100.13s (0:01:40) =======================================
