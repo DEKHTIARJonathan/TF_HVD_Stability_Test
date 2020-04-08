@@ -9,16 +9,10 @@ import unittest
 from parameterized import parameterized
 from parameterized import param
 
-
-__all__ = [
-    'CustomTestCase',
-]
-
 SUCCESS_CODE = 0
-SIGKILL_CODE = 9
 
 
-class CustomTestCase(unittest.TestCase):
+class HorovodTest(unittest.TestCase):
 
     def run_command(self, job_name, cmdline_flags):
 
@@ -26,7 +20,7 @@ class CustomTestCase(unittest.TestCase):
             command_proc = subprocess.Popen(cmd)
             return_code = command_proc.wait()
 
-            if return_code not in [SUCCESS_CODE, SIGKILL_CODE]:
+            if return_code == SUCCESS_CODE:
                 sys.tracebacklimit = 0
                 stdout, stderr = command_proc.communicate()
                 raise RuntimeError(
