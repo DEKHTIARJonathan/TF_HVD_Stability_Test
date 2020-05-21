@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import subprocess
 import sys
 import unittest
@@ -29,8 +28,8 @@ class HorovodTest(unittest.TestCase):
                     "[*] STERR:{error_stderr}\n"
                     "[*] command launched: `{command}`\n"
                     "##################################################\n".format(
-                        error_stdout=stdout.decode("utf-8"),
-                        error_stderr=stderr.decode("utf-8"),
+                        error_stdout=stdout.decode("utf-8") if stdout is not None else "",
+                        error_stderr=stderr.decode("utf-8") if stderr is not None else "",
                         command=" ".join(cmd)
                     )
                 )
