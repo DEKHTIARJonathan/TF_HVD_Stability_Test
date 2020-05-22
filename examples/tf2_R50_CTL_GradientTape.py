@@ -15,7 +15,6 @@
 from __future__ import absolute_import, division, print_function
 
 import argparse
-import os
 import numpy as np
 import timeit
 
@@ -26,8 +25,10 @@ from tensorflow.keras import applications
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
 # Benchmark settings
-parser = argparse.ArgumentParser(description='TensorFlow Synthetic Benchmark',
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(
+    description='TensorFlow Synthetic Benchmark',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
 parser.add_argument('--fp16-allreduce', action='store_true', default=False,
                     help='use fp16 compression during allreduce')
 
@@ -40,29 +41,24 @@ parser.add_argument('--batch-size', type=int, default=32,
 parser.add_argument('--num-iters', type=int, default=5,
                     help='number of benchmark iterations')
 
-parser.add_argument('--no-cuda', action='store_true', default=False,
-                    help='disables CUDA training')
-
 parser.add_argument('--use-amp', action='store_true', default=False,
                     help='enable AMP computation')
 
 args = parser.parse_args()
-args.cuda = not args.no_cuda
-
-if args.use_amp:
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
 
 # Horovod: initialize Horovod.
 hvd.init()
 
 # Horovod: pin GPU to be used to process local rank (one GPU per process)
-if args.cuda:
-    gpus = tf.config.experimental.list_physical_devices('GPU')
-    if gpus:
-        tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
-else:
-    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+if gpus:
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+
+if args.use_amp:
+    policy = mixed_precision.Policy('mixed_float16')
+    mixed_precision.set_policy(policy)
 
 # Set up standard model.
 model = getattr(applications, args.model)(weights=None)
@@ -83,7 +79,7 @@ def benchmark_step(first_batch):
     # Horovod: use DistributedGradientTape
     with tf.GradientTape() as tape:
         probs = model(data, training=True)
-        loss = tf.losses.categorical_crossentropy(target, probs)
+        loss = tf.losses.sparse_categorical_crossentropy(target, probs)
 
         if args.use_amp:
             loss = opt.get_scaled_loss(loss)
@@ -117,7 +113,7 @@ def log(s, nl=True):
 
 log('Model: %s' % args.model)
 log('Batch size: %d' % args.batch_size)
-device = 'GPU' if args.cuda else 'CPU'
+device = 'GPU'
 log('Number of %ss: %d' % (device, hvd.size()))
 
 

@@ -37,17 +37,19 @@ parser.add_argument('--use-amp', action='store_true', default=False,
 
 args = parser.parse_args()
 
-if args.use_amp:
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
-
 # Horovod: initialize Horovod.
 hvd.init()
 
 # Horovod: pin GPU to be used to process local rank (one GPU per process)
 gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 if gpus:
     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+
+if args.use_amp:
+    policy = mixed_precision.Policy('mixed_float16')
+    mixed_precision.set_policy(policy)
 
 (mnist_images, mnist_labels), _ = \
     tf.keras.datasets.mnist.load_data(
@@ -89,6 +91,10 @@ def training_step(images, labels, first_batch):
 
     with tf.GradientTape() as tape:
         probs = mnist_model(images, training=True)
+
+        import sys
+        print("labels:", labels, file=sys.stderr)
+        print("probs:", probs, file=sys.stderr)
         loss_value = loss(labels, probs)
 
         if args.use_amp:

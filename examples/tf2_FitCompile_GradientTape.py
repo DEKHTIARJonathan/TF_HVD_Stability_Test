@@ -35,25 +35,27 @@ parser.add_argument('--use-amp', action='store_true', default=False,
 
 args = parser.parse_args()
 
-if args.use_amp:
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
-
 # Horovod: initialize Horovod.
 hvd.init()
 
 # Horovod: pin GPU to be used to process local rank (one GPU per process)
 gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 if gpus:
     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+
+if args.use_amp:
+    policy = mixed_precision.Policy('mixed_float16')
+    mixed_precision.set_policy(policy)
 
 (mnist_images, mnist_labels), _ = \
     tf.keras.datasets.mnist.load_data(path='mnist-%d.npz' % hvd.rank())
 
-dataset = tf.data.Dataset.from_tensor_slices(
-    (tf.cast(mnist_images[..., tf.newaxis] / 255.0, tf.float32),
-             tf.cast(mnist_labels, tf.int64))
-)
+dataset = tf.data.Dataset.from_tensor_slices((
+    tf.cast(mnist_images[..., tf.newaxis] / 255.0, tf.float32),
+    tf.cast(mnist_labels, tf.int64)
+))
 dataset = dataset.repeat().shuffle(10000).batch(128)
 
 mnist_model = tf.keras.Sequential([
