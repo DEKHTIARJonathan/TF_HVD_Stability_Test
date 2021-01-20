@@ -13,6 +13,8 @@
 # limitations under the License.
 # ==============================================================================
 
+# Inspired by: https://github.com/horovod/horovod/blob/master/examples/tensorflow2/tensorflow2_mnist.py
+
 import argparse
 import tensorflow as tf
 import horovod.tensorflow as hvd

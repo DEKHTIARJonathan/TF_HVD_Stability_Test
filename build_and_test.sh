@@ -1,6 +1,7 @@
 docker build -t horovod_test_container:latest .
 
 docker run -it --rm \
-  --gpus all \
+  --gpus '"device=0,1"' \
   --shm-size=2g --ulimit memlock=-1 --ulimit stack=67108864 \
-  horovod_test_container:latest bash -c "python3.7 -m pytest"
+  -v $(pwd):/workspace \
+  horovod_test_container:latest bash -c "python3.8 -m pytest"

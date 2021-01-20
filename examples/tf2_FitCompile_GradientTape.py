@@ -13,6 +13,8 @@
 # limitations under the License.
 # ==============================================================================
 
+# Inspired by: https://github.com/horovod/horovod/blob/master/examples/tensorflow2/tensorflow2_keras_mnist.py
+
 import argparse
 import tensorflow as tf
 import horovod.tensorflow.keras as hvd
@@ -70,10 +72,12 @@ mnist_model = tf.keras.Sequential([
 ])
 
 # Horovod: adjust learning rate based on number of GPUs.
-opt = tf.optimizers.Adam(0.001 * hvd.size())
+scaled_lr = 0.001 * hvd.size()
+opt = tf.optimizers.Adam(scaled_lr)
 
 # Horovod: add Horovod DistributedOptimizer.
-opt = hvd.DistributedOptimizer(opt)
+opt = hvd.DistributedOptimizer(
+    opt, backward_passes_per_step=1, average_aggregated_gradients=True)
 
 if args.use_amp:
     opt = mixed_precision.LossScaleOptimizer(opt, loss_scale='dynamic')
@@ -100,7 +104,7 @@ callbacks = [
     # Horovod: using `lr = 1.0 * hvd.size()` from the very beginning leads to worse final
     # accuracy. Scale the learning rate `lr = 1.0` ---> `lr = 1.0 * hvd.size()` during
     # the first three epochs. See https://arxiv.org/abs/1706.02677 for details.
-    hvd.callbacks.LearningRateWarmupCallback(warmup_epochs=3, verbose=1),
+    hvd.callbacks.LearningRateWarmupCallback(initial_lr=scaled_lr, warmup_epochs=3, verbose=1),
 ]
 
 # Horovod: write logs on worker 0.

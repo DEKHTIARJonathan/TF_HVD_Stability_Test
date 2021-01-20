@@ -1,8 +1,9 @@
-FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04
+FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
 
-# Install GCC, Python3.7 and other dependencies.
+# Install GCC, Python3.8 and other dependencies.
 RUN apt-get update && \
-    apt-get install --assume-yes \
+    ln -fs /usr/share/zoneinfo/America/Monterrey /etc/localtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes \
         build-essential \
         git \
         wget \
@@ -15,22 +16,22 @@ RUN apt-get update && \
         librdmacm1 \
         libibverbs1 \
         ibverbs-providers \
-        python3.7 \
-        python3.7-dev \
+        python3.8 \
+        python3.8-dev \
         python3-pip \
-        python3.7-distutils && \
+        python3.8-distutils && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /usr/bin/python && \
     rm -f /usr/bin/python3 && \
-    ln -s /usr/bin/python3.7 /usr/bin/python && \
-    ln -s /usr/bin/python3.7 /usr/bin/python3 && \
+    ln -s /usr/bin/python3.8 /usr/bin/python && \
+    ln -s /usr/bin/python3.8 /usr/bin/python3 && \
     gcc --version && \
     g++ --version
 
 # Install tf-nightly and verify version.
-RUN python3.7 -m pip install --upgrade pip && \
-    pip3.7 install --no-cache --no-cache-dir tf-nightly && \
-    python3.7 -c "import tensorflow as tf; print(tf.__version__)"
+RUN python3.8 -m pip install --upgrade pip && \
+    pip3.8 install --no-cache --no-cache-dir tf-nightly && \
+    python3.8 -c "import tensorflow as tf; print(tf.__version__)"
 
 WORKDIR /tmp/openmpi_source
 
@@ -51,12 +52,10 @@ ENV HOROVOD_WITH_TENSORFLOW=1
 ENV HOROVOD_WITHOUT_PYTORCH=1
 ENV HOROVOD_WITHOUT_MXNET=1
 
-RUN pip3.7 install --no-cache --no-cache-dir \
+RUN pip3.8 install --no-cache --no-cache-dir \
         git+https://github.com/horovod/horovod.git
 
 WORKDIR /workspace
 
-RUN git clone \
-        https://github.com/DEKHTIARJonathan/TF_HVD_Stability_Test.git \
-        /workspace && \
-    pip3.7 install --no-cache --no-cache-dir -r requirements.txt
+COPY requirements.txt /tmp/
+RUN  pip3.8 install --no-cache --no-cache-dir -r /tmp/requirements.txt
