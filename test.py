@@ -171,7 +171,31 @@ class HorovodTest(unittest.TestCase):
             filename="tf2_FitCompile_GradientTape",
             cmdline_flags="--use-amp --fp16-allreduce",
             num_gpus=2
-        )
+        ),
+        param(
+            "keras fit & compile - NaN Stay in Sync - No AMP - 2GPUs",
+            filename="tf2_nan_FitCompile",
+            cmdline_flags="",
+            num_gpus=2
+        ),
+        param(
+            "keras fit & compile - NaN Stay in Sync - With AMP - 2GPUs",
+            filename="tf2_nan_FitCompile",
+            cmdline_flags="--use_amp",
+            num_gpus=2
+        ),
+        param(
+            "keras CTL - NaN Stay in Sync - No AMP - 2GPUs",
+            filename="tf2_nan_CTL",
+            cmdline_flags="",
+            num_gpus=2
+        ),
+        param(
+            "keras CTL - NaN Stay in Sync - With AMP - 2GPUs",
+            filename="tf2_nan_CTL",
+            cmdline_flags="--use_amp",
+            num_gpus=2
+        ),
     ])
     def test_example(self, _, filename, cmdline_flags, num_gpus):
         if len(gpu_util.getGPUs()) < num_gpus:
