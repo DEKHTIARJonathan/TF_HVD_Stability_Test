@@ -1,4 +1,9 @@
-FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
+# See: https://hub.docker.com/r/nvidia/cuda/tags?page=1&ordering=last_updated
+#FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
+#FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu20.04
+#FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu20.04
+#FROM nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
 
 # Install GCC, Python3.8 and other dependencies.
 RUN apt-get update && \
