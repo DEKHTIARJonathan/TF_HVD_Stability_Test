@@ -23,8 +23,6 @@ import tensorflow as tf
 import horovod.tensorflow as hvd
 from tensorflow.keras import applications
 
-from tensorflow.keras.mixed_precision import experimental as mixed_precision
-
 # Benchmark settings
 parser = argparse.ArgumentParser(
     description='TensorFlow Synthetic Benchmark',
@@ -58,15 +56,15 @@ if gpus:
     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 if args.use_amp:
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
+    policy = tf.keras.mixed_precision.Policy('mixed_float16')
+    tf.keras.mixed_precision.set_global_policy(policy)
 
 # Set up standard model.
 model = getattr(applications, args.model)(weights=None)
 opt = tf.optimizers.SGD(0.01)
 
 if args.use_amp:
-    opt = mixed_precision.LossScaleOptimizer(opt, loss_scale='dynamic')
+    opt = tf.keras.mixed_precision.LossScaleOptimizer(opt, dynamic=True)
 
 data = tf.random.uniform([args.batch_size, 224, 224, 3])
 target = tf.random.uniform([args.batch_size, 1], minval=0, maxval=999, dtype=tf.int64)

@@ -21,8 +21,8 @@ if gpus:
 
 # Enable AMP
 if args.use_amp:
-    policy = tf.keras.mixed_precision.experimental.Policy('mixed_float16')
-    tf.keras.mixed_precision.experimental.set_policy(policy)
+    policy = tf.keras.mixed_precision.Policy('mixed_float16')
+    tf.keras.mixed_precision.set_global_policy(policy)
 
 # Create dummy model
 model = tf.keras.models.Sequential()

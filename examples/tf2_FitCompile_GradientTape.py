@@ -19,8 +19,6 @@ import argparse
 import tensorflow as tf
 import horovod.tensorflow.keras as hvd
 
-from tensorflow.keras.mixed_precision import experimental as mixed_precision
-
 # Benchmark settings
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -48,8 +46,8 @@ if gpus:
     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 if args.use_amp:
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
+    policy = tf.keras.mixed_precision.Policy('mixed_float16')
+    tf.keras.mixed_precision.set_global_policy(policy)
 
 (mnist_images, mnist_labels), _ = \
     tf.keras.datasets.mnist.load_data(path='mnist-%d.npz' % hvd.rank())
@@ -80,7 +78,7 @@ opt = hvd.DistributedOptimizer(
     opt, backward_passes_per_step=1, average_aggregated_gradients=True)
 
 if args.use_amp:
-    opt = mixed_precision.LossScaleOptimizer(opt, loss_scale='dynamic')
+    opt = tf.keras.mixed_precision.LossScaleOptimizer(opt, dynamic=True)
 
 # Horovod: Specify `experimental_run_tf_function=False` to ensure TensorFlow
 # uses hvd.DistributedOptimizer() to compute gradients.

@@ -19,8 +19,6 @@ import argparse
 import tensorflow as tf
 import horovod.tensorflow as hvd
 
-from tensorflow.keras.mixed_precision import experimental as mixed_precision
-
 BATCH_SIZE = 128
 
 # Benchmark settings
@@ -50,8 +48,8 @@ if gpus:
     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 if args.use_amp:
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
+    policy = tf.keras.mixed_precision.Policy('mixed_float16')
+    tf.keras.mixed_precision.set_global_policy(policy)
 
 (mnist_images, mnist_labels), _ = \
     tf.keras.datasets.mnist.load_data(
@@ -80,7 +78,7 @@ loss = tf.losses.SparseCategoricalCrossentropy()
 opt = tf.optimizers.Adam(0.001 * hvd.size())
 
 if args.use_amp:
-    opt = mixed_precision.LossScaleOptimizer(opt, loss_scale='dynamic')
+    opt = tf.keras.mixed_precision.LossScaleOptimizer(opt, dynamic=True)
 
 # checkpoint_dir = './checkpoints'
 # checkpoint = tf.train.Checkpoint(model=mnist_model, optimizer=opt)
